@@ -13,8 +13,8 @@ import static java.lang.System.*;
 import static java.lang.Math.*;
 
 public class Racional {
-	private int numerador;
-	private int denominador;
+	int numerador;
+	int denominador;
 	
 	private void reducir(){
 		/**
@@ -29,16 +29,25 @@ public class Racional {
 	}
 	
 	public Racional(){
+		/**
+		 * Por defecto crea un racional 1/1.
+		 */
 		numerador = 1;
 		denominador = 1;
 		this.reducir();
 	}
 	public Racional(int n){
+		/**
+		 * Si se le pasa sólo un parámetro construye la interpretación racional de un número entero (n/1).
+		 */
 		numerador = n;
 		denominador = 1;
 		this.reducir();
 	}
 	public Racional(int n, int d){
+		/**
+		 * Si se le pasan dos parametros, el primero será el numerador y el segundo el denominador. Se comprueba que d no sea 0.
+		 */
 		if(d != 0){
 			numerador = n;
 			denominador = d;
@@ -69,56 +78,104 @@ public class Racional {
 		return numerador + "/" + denominador;
 	}
 	public Racional suma(Racional rat){
+		/**
+		 * Si los denomiadores son iguales, suma los numeradores.
+		 * Si los denomiadores son distintos multiplica cada racional por el denominador del otro y luego suma los numeradores.
+		 * Al final se reduce.
+		 */
 		Racional solucion = new Racional();
-		if(rat.denominador == this.denominador){
-			solucion.denominador = this.denominador;
-			solucion.numerador = this.numerador + rat.numerador;
+		if(rat.getDenominador() == this.denominador){
+			solucion.setDenominador(this.denominador);
+			solucion.setNumerador(this.numerador + rat.getNumerador());
 		}
 		else{
-			solucion.denominador = this.denominador * rat.denominador;
-			solucion.numerador = (this.numerador * rat.denominador) + (rat.numerador * this.denominador);
+			solucion.setDenominador(this.denominador * rat.getDenominador());
+			solucion.setNumerador((this.numerador * rat.getDenominador()) + (rat.getNumerador() * this.denominador));
 		}
 		solucion.reducir();
 		return solucion;
 	}
 	public Racional resta(Racional rat){
+		/**
+		 * Igual que la suma, pero se restan los numeradores en vez de sumarse.
+		 */
 		Racional solucion = new Racional();
-		if(rat.denominador == this.denominador){
-			solucion.denominador = this.denominador;
-			solucion.numerador = this.numerador - rat.numerador;
+		if(rat.getDenominador() == this.denominador){
+			solucion.setDenominador(this.denominador);
+			solucion.setNumerador(this.numerador - rat.getNumerador());
 		}
 		else{
-			solucion.denominador = this.denominador * rat.denominador;
-			solucion.numerador = (this.numerador * rat.denominador) - (rat.numerador * this.denominador);
+			solucion.setDenominador(this.denominador * rat.getDenominador());
+			solucion.setNumerador((this.numerador * rat.getDenominador()) - (rat.getNumerador() * this.denominador));
 		}
 		solucion.reducir();
 		return solucion;
 	}
 	public Racional producto(Racional rat){
+		/**
+		 * Multiplicamos los numeradores y los denominadores entre sí.
+		 * Redicimos.
+		 */
 		Racional solucion = new Racional();
-		solucion.denominador = this.denominador * rat.denominador;
-		solucion.numerador = this.numerador * rat.numerador;
+		solucion.setDenominador(this.denominador * rat.getDenominador());
+		solucion.setNumerador(this.numerador * rat.getNumerador());
 		solucion.reducir();
 		return solucion;
 	}
 	public Racional division(Racional rat){
+		/**
+		 * Se multiplican en curz los denominadores y numeradores.
+		 * Reducimos
+		 */
 		Racional solucion = new Racional();
-		solucion.denominador = this.denominador * rat.numerador;
-		solucion.numerador = this.numerador * rat.denominador;
+		solucion.setDenominador(this.denominador * rat.getNumerador());
+		solucion.setNumerador(this.numerador * rat.getDenominador());
 		solucion.reducir();
 		return solucion;
 	}
 	
-	public static void main(String args[]){
-		Racional racional1, racional2, racionalSum, racionalRes, racionalPro, racionalDiv;
-		racional1 = new Racional(7, 49);
-		racional2 = new Racional(3, 33);
-		racionalSum = racional1.suma(racional2);
-		racionalRes = racional1.resta(racional2);
-		racionalPro = racional1.producto(racional2);
-		racionalDiv = racional1.division(racional2);
-		
-		out.println(racional1 + ", " + racional2 + "\nSuma: " + racionalSum + "\nResta: " + racionalRes +
-				"\nProducto: " + racionalPro + "\nDivision: " + racionalDiv + "\n");
+	public boolean igual(Racional rat){
+		/**
+		 * Comprueba si los denominadores son distintos y luego los numeradores.
+		 * Si alguno es distinto devuelve false, si no devuelve true.
+		 */
+		if(rat.getDenominador() != this.denominador)
+			return false;
+		if(rat.getNumerador() != this.numerador)
+			return false;
+		return true;
+	}
+	public boolean menor(Racional rat){
+		/**
+		 * Para comprobar que this es menor que rat, restamos this a rat.
+		 * Si el resultado es positivo, this es menor.
+		 */
+		Racional diff = rat.resta(this);
+		if(diff.getNumerador() < 0)
+			return false;
+		return true;
+	}
+	public boolean mayor(Racional rat){
+		/**
+		 * Para comprobar que this es mayor que rat, restamos rat a this.
+		 * Si el resultado es positivo, this es mayor.
+		 */
+		Racional diff = this.resta(rat);
+		if(diff.getNumerador() < 0)
+			return false;
+		return true;
+	}
+	
+	public static Racional suma(Racional sumando1, Racional sumando2){
+		return sumando1.suma(sumando2);
+	}
+	public static Racional resta(Racional minuendo, Racional sustraendo){
+		return minuendo.resta(sustraendo);
+	}
+	public static Racional producto(Racional operando1, Racional operando2){
+		return operando1.producto(operando2);
+	}
+	public static Racional division(Racional dividendo, Racional divisor){
+		return dividendo.division(divisor);
 	}
 }
